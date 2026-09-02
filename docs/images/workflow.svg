@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" width="100%" height="100%">
+  <defs>
+    <style>
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: bold; fill: #1e293b; }
+      .step-num { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: bold; fill: #ffffff; }
+      .step-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: bold; fill: #0f172a; }
+      .step-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 11px; fill: #475569; }
+    </style>
+    <marker id="wf-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+    <filter id="wf-shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="960" height="380" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Title -->
+  <text x="30" y="38" class="title">Email Ingestion &amp; Asynchronous Dispatch Flow</text>
+
+  <!-- Step 1 -->
+  <g filter="url(#wf-shadow)">
+    <rect x="30" y="70" width="160" height="260" rx="10" fill="#f8fafc" stroke="#cbd5e1"/>
+    <circle cx="55" cy="95" r="14" fill="#2563eb"/>
+    <text x="55" y="100" text-anchor="middle" class="step-num">1</text>
+    <text x="80" y="100" class="step-title">REST API Call</text>
+    <line x1="45" y1="120" x2="175" y2="120" stroke="#e2e8f0"/>
+    <text x="45" y="145" class="step-desc">Client initiates HTTP</text>
+    <text x="45" y="165" class="step-desc">POST /api/v1/sendmail</text>
+    <text x="45" y="195" class="step-desc">Supports JSON or</text>
+    <text x="45" y="215" class="step-desc">Multipart Attachment</text>
+    <text x="45" y="245" class="step-desc">Validates payload</text>
+  </g>
+
+  <!-- Arrow 1 to 2 -->
+  <path d="M 190 200 L 220 200" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#wf-arrow)"/>
+
+  <!-- Step 2 -->
+  <g filter="url(#wf-shadow)">
+    <rect x="220" y="70" width="160" height="260" rx="10" fill="#eff6ff" stroke="#bfdbfe"/>
+    <circle cx="245" cy="95" r="14" fill="#3b82f6"/>
+    <text x="245" y="100" text-anchor="middle" class="step-num">2</text>
+    <text x="270" y="100" class="step-title">Persist Record</text>
+    <line x1="235" y1="120" x2="365" y2="120" stroke="#bfdbfe"/>
+    <text x="235" y="145" class="step-desc">Saves in PostgreSQL</text>
+    <text x="235" y="165" class="step-desc">Table: nnp_email</text>
+    <text x="235" y="195" class="step-desc">Status set to QUEUED</text>
+    <text x="235" y="225" class="step-desc">Stores JSONB params</text>
+    <text x="235" y="245" class="step-desc">&amp; binary attachments</text>
+  </g>
+
+  <!-- Arrow 2 to 3 -->
+  <path d="M 380 200 L 410 200" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#wf-arrow)"/>
+
+  <!-- Step 3 -->
+  <g filter="url(#wf-shadow)">
+    <rect x="410" y="70" width="160" height="260" rx="10" fill="#fef2f2" stroke="#fecaca"/>
+    <circle cx="435" cy="95" r="14" fill="#ef4444"/>
+    <text x="435" y="100" text-anchor="middle" class="step-num">3</text>
+    <text x="460" y="100" class="step-title">JMS Enqueue</text>
+    <line x1="425" y1="120" x2="555" y2="120" stroke="#fecaca"/>
+    <text x="425" y="145" class="step-desc">Pushes email_id to</text>
+    <text x="425" y="165" class="step-desc">ActiveMQ Artemis</text>
+    <text x="425" y="195" class="step-desc">Queue: nnp-sendmail</text>
+    <text x="425" y="225" class="step-desc">HTTP 202 Accepted</text>
+    <text x="425" y="245" class="step-desc">returned to client</text>
+  </g>
+
+  <!-- Arrow 3 to 4 -->
+  <path d="M 570 200 L 600 200" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#wf-arrow)"/>
+
+  <!-- Step 4 -->
+  <g filter="url(#wf-shadow)">
+    <rect x="600" y="70" width="160" height="260" rx="10" fill="#fefce8" stroke="#fef08a"/>
+    <circle cx="625" cy="95" r="14" fill="#eab308"/>
+    <text x="625" y="100" text-anchor="middle" class="step-num">4</text>
+    <text x="650" y="100" class="step-title">Render &amp; Build</text>
+    <line x1="615" y1="120" x2="745" y2="120" stroke="#fef08a"/>
+    <text x="615" y="145" class="step-desc">JMS Receiver worker</text>
+    <text x="615" y="165" class="step-desc">loads entity from DB</text>
+    <text x="615" y="195" class="step-desc">FreeMarker compiles</text>
+    <text x="615" y="215" class="step-desc">HTML/text template</text>
+    <text x="615" y="245" class="step-desc">Assembles MIME</text>
+  </g>
+
+  <!-- Arrow 4 to 5 -->
+  <path d="M 760 200 L 790 200" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#wf-arrow)"/>
+
+  <!-- Step 5 -->
+  <g filter="url(#wf-shadow)">
+    <rect x="790" y="70" width="140" height="260" rx="10" fill="#f0fdf4" stroke="#bbf7d0"/>
+    <circle cx="815" cy="95" r="14" fill="#16a34a"/>
+    <text x="815" y="100" text-anchor="middle" class="step-num">5</text>
+    <text x="835" y="100" class="step-title">SMTP Dispatch</text>
+    <line x1="805" y1="120" x2="915" y2="120" stroke="#bbf7d0"/>
+    <text x="805" y="145" class="step-desc">Sends via SMTP</text>
+    <text x="805" y="165" class="step-desc">Relay (SES / MailHog)</text>
+    <text x="805" y="195" class="step-desc">Updates status in DB</text>
+    <text x="805" y="215" class="step-desc">to 'Success'</text>
+    <text x="805" y="245" class="step-desc">Audit trail ready</text>
+  </g>
+</svg>

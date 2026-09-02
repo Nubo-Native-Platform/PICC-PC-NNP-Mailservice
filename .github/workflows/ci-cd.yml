@@ -1,0 +1,67 @@
+name: CI/CD Pipeline - NNP Mail Service
+
+on:
+  push:
+    branches: [ main, master, develop ]
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    name: Build, Test & Quality Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Validate Maven POM
+        run: mvn validate
+
+      - name: Run Unit & Slice Tests
+        run: mvn test
+
+      - name: Static Application Security Testing (SpotBugs + FindSecBugs)
+        run: mvn spotbugs:check
+
+      - name: Generate CycloneDX SBOM (1.5 JSON)
+        run: mvn cyclonedx:makeAggregateBom
+
+      - name: Upload SBOM Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cyclone-dx-sbom
+          path: target/bom.json
+
+  publish:
+    name: Publish Artifact to GitHub Packages
+    needs: build-and-test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Deploy to GitHub Packages
+        run: mvn clean deploy -Pgithub-packages -DskipTests
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
