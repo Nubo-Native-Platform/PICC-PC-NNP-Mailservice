@@ -143,8 +143,8 @@ To start the service along with PostgreSQL, ActiveMQ Artemis, and MailHog:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/nnp-mailservice.git
-cd nnp-mailservice
+git clone https://github.com/Nubo-Native-Platform/PICC-PC-NNP-Mailservice.git
+cd PICC-PC-NNP-Mailservice
 
 # Start all backing services and the mail microservice
 docker-compose up -d
