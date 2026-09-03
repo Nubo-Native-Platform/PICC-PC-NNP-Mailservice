@@ -1,6 +1,6 @@
-# NNP Mail Service - User Manual & Deployment Guide
+# PICC - PC - NNP Mail Service - User Manual & Deployment Guide
 
-This document provides a comprehensive operational guide for system operators, integrating applications, and DevOps engineers using and deploying the **NNP Mail Service**.
+This document provides a comprehensive operational guide for system operators, integrating applications, and DevOps engineers using and deploying the **PICC - PC - NNP Mail Service**.
 
 ---
 

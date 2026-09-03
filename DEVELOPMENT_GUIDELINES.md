@@ -1,6 +1,6 @@
-# NNP Mail Service - Development Guidelines
+# PICC - PC - NNP Mail Service - Development Guidelines
 
-Welcome to the **NNP Mail Service** development guidelines. This document provides developers and open-source contributors with in-depth technical details on the architecture, setup instructions, development patterns, extension points, and code quality standards.
+Welcome to the **PICC - PC - NNP Mail Service** development guidelines. This document provides developers and open-source contributors with in-depth technical details on the architecture, setup instructions, development patterns, extension points, and code quality standards.
 
 ---
 
@@ -429,4 +429,4 @@ Before submitting a PR:
 
 ## Code of Conduct
 
-Contributors are expected to adhere to standard respectful, inclusive, and professional open-source community guidelines.
+Contributors are expected to adhere to standard respectful, inclusive, and professional open-source community guidelines as outlined in [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
