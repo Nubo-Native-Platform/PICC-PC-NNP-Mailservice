@@ -262,8 +262,8 @@ This pushes the `email_id` back onto the ActiveMQ Artemis queue for immediate re
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-org/nnp-mailservice.git
-   cd nnp-mailservice
+   git clone https://github.com/Nubo-Native-Platform/PICC-PC-NNP-Mailservice.git
+   cd PICC-PC-NNP-Mailservice
    ```
 
 2. Start all components in background:
