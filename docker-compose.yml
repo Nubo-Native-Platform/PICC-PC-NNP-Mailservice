@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database for persistent email logs & attachment storage
+  postgres:
+    image: postgres:15-alpine
+    container_name: nnp-mailservice-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: nnp_mailservice
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d nnp_mailservice"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Apache ActiveMQ Artemis Message Broker
+  artemis:
+    image: apache/activemq-artemis:latest-alpine
+    container_name: nnp-mailservice-artemis
+    restart: unless-stopped
+    environment:
+      ARTEMIS_USER: artemis
+      ARTEMIS_PASSWORD: artemispassword
+      EXTRA_ARGS: --http-host 0.0.0.0 --relax-jolokia
+    ports:
+      - "61616:61616" # JMS Broker port
+      - "8161:8161"   # Artemis Web Console (http://localhost:8161)
+    volumes:
+      - artemis_data:/var/lib/artemis/data
+
+  # MailHog - Local SMTP server with Web UI for viewing sent emails
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: nnp-mailservice-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025" # SMTP server
+      - "8025:8025" # Web UI (http://localhost:8025)
+
+  # NNP Mail Service Application
+  mailservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nnp-mailservice-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: standalone
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/nnp_mailservice
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgrespassword
+      SPRING_DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
+      SPRING_ACTIVEMQ_BROKER_URL: tcp://artemis:61616
+      SPRING_ACTIVEMQ_USER: artemis
+      SPRING_ACTIVEMQ_PASSWORD: artemispassword
+      SPRING_MAIL_HOST: mailhog
+      SPRING_MAIL_PORT: 1025
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "false"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      artemis:
+        condition: service_started
+      mailhog:
+        condition: service_started
+
+volumes:
+  postgres_data:
+  artemis_data:
